@@ -11,4 +11,4 @@ Experimental 64 bit kernel written in rust.
 2. Install qemu
 3. Install rust via [rustup](https://www.rustup.rs/)
 4. Use nightly compiler in this dir
-  - `rustup override add nightly`
+    1. `rustup override add nightly`
