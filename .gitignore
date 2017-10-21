@@ -1,0 +1,9 @@
+# Build/target folders
+target/*
+build/*
+
+# Vim swap files
+*.swp
+
+# ELF object files
+*.o
