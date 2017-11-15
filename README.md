@@ -12,3 +12,6 @@ Experimental 64 bit kernel written in rust.
 3. Install rust via [rustup](https://www.rustup.rs/)
 4. Use nightly compiler in this dir
     1. `rustup override add nightly`
+5. Compile rust code
+    1. `cargo build`
+6. `make run`
