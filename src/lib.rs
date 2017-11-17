@@ -10,7 +10,10 @@ extern crate multiboot2;
 
 #[macro_use]
 mod vga_buffer;
-mod buddy_alloc;
+mod memory;
+
+use core::mem;
+use memory::FrameAllocator;
 
 #[no_mangle]
 pub extern fn rust_main(multiboot_information_address: usize) {
@@ -29,11 +32,11 @@ pub extern fn rust_main(multiboot_information_address: usize) {
     let elf_sections_tag = boot_info.elf_sections_tag()
         .expect("Elf-sections tag required");
 
-	println!("kernel sections:");
-	for section in elf_sections_tag.sections() {
-		println!("    addr: 0x{:x}, size: 0x{:x}, flags: 0x{:x}",
-			section.addr, section.size, section.flags);
-	}
+	//println!("kernel sections:");
+	//for section in elf_sections_tag.sections() {
+	//	println!("    addr: 0x{:x}, size: 0x{:x}, flags: 0x{:x}",
+	//		section.addr, section.size, section.flags);
+	//}
 
 	let kernel_start = elf_sections_tag.sections().map(|s| s.addr)
 		.min().unwrap();
@@ -45,11 +48,12 @@ pub extern fn rust_main(multiboot_information_address: usize) {
 
     println!("kernel start: 0x{:x}, kernel end: 0x{:x}", kernel_start, kernel_end);
     println!("multiboot start: 0x{:x}, multiboot end: 0x{:x}", multiboot_start, multiboot_end);
-    let mut buddy = buddy_alloc::BuddyAllocator::new();
-    let offset = buddy.allocate(2);
-    let offset1 = buddy.allocate(1);
-    println!("offset: {}, offset1: {}", offset, offset1);
-    println!("addr: {:?}", &buddy as *const _);
+    let mut allocator = memory::Allocator::new(kernel_start as usize, kernel_end as usize,
+                                                  multiboot_start as usize, multiboot_end as usize);
+    println!("{:?}", &allocator as *const _);
+    println!("{:?}", allocator.allocate(1));
+    println!("{:?}", allocator.allocate(2));
+    println!("{:?}", allocator.allocate(2));
 
     loop{}
 }
