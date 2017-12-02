@@ -37,6 +37,11 @@ set_up_page_tables:
     or eax, 0b11 ; present + writable
     mov [p3_table], eax
 
+    ; map last P4 entry recursively to the first P4 entry
+    mov eax, p4_table
+    or eax, 0b11 ; present + writable
+    mov [p4_table + 511 * 8], eax
+
     ; map each P2 entry to a huge 2MiB page
     mov ecx, 0         ; counter variable
 

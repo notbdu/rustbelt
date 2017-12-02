@@ -3,16 +3,19 @@
 #![feature(const_unique_new)]
 #![feature(const_fn)]
 #![no_std]
+#![allow(dead_code)]
 extern crate rlibc;
 extern crate volatile;
 extern crate spin;
 extern crate multiboot2;
+#[macro_use]
+extern crate bitflags;
+extern crate x86_64;
 
 #[macro_use]
 mod vga_buffer;
 mod memory;
 
-use core::mem;
 use memory::FrameAllocator;
 
 #[no_mangle]
@@ -48,12 +51,14 @@ pub extern fn rust_main(multiboot_information_address: usize) {
 
     println!("kernel start: 0x{:x}, kernel end: 0x{:x}", kernel_start, kernel_end);
     println!("multiboot start: 0x{:x}, multiboot end: 0x{:x}", multiboot_start, multiboot_end);
-    let mut allocator = memory::Allocator::new(kernel_start as usize, kernel_end as usize,
-                                                  multiboot_start as usize, multiboot_end as usize);
+    let mut allocator = memory::Allocator::new(kernel_end as usize, multiboot_start as usize,
+                                               multiboot_end as usize);
     println!("{:?}", &allocator as *const _);
+    println!("{:?}", allocator.allocate(1));
     println!("{:?}", allocator.allocate(1));
     println!("{:?}", allocator.allocate(2));
     println!("{:?}", allocator.allocate(2));
+    memory::test_paging(&mut allocator);
 
     loop{}
 }
